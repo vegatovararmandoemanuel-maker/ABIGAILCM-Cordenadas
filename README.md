@@ -1,4 +1,4 @@
-Githube Apps-Coreem-ABIGAIL📍
+** ABIGAIL.github.io**
 
 **Localizador de Coordenadas GPS - Aplicación Web Interactiva**
 
@@ -56,12 +56,12 @@ Una aplicación web moderna para obtener, visualizar y gestionar coordenadas GPS
 ## 📁 Estructura del Proyecto
 
 ```
-Apps-coreem/
+ABIGAILTEAMO/
 ├── index.html          # Página principal
 ├── styles.css          # Estilos CSS
 ├── script.js           # Lógica JavaScript
 ├── README.md           # Este archivo
-└── Apps-coreem-main.zip # Archivo original (opcional)
+└─Abigailteamo-main.zip # Archivo original (opcional)
 ```
 
 ## 🛠️ Tecnologías Utilizadas
@@ -88,10 +88,10 @@ Apps-coreem/
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/vegatovararmandoemanuel-maker/Apps-coreem.git
+git clone https://github.com/vegatovararmandoemanuel-maker/ABIGAILTEAMO.github.io
 
 # Navegar a la carpeta
-cd Apps-coreem
+cd ABIGAILTEAMO
 
 # Abrir en el navegador (si tienes Python 3)
 python -m http.server 8000
@@ -104,7 +104,7 @@ python -m http.server 8000
 Si tienes GitHub Pages habilitado:
 1. Ve a Settings → Pages
 2. Selecciona `main` branch como source
-3. La app estará disponible en: `https://vegatovararmandoemanuel-maker.github.io/Apps-coreem/`
+3. La app estará disponible en: `https://vegatovararmandoemanuel-maker.github.io/ABIGAILTEAMO/`
 
 ## 🔐 Privacidad y Seguridad
 
@@ -170,5 +170,4 @@ Las contribuciones son bienvenidas. Por favor:
 Si tienes preguntas o encontras problemas, abre un issue en el repositorio.
 
 ---
-
-**Hecho con ❤️ para obtener coordenadas fácilmente** 📍
+**te amo Abigail 📍**
