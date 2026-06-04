@@ -82,6 +82,11 @@
                         📤 Importar Datos (JSON)
                     </button>
                     <input type="file" id="fileInput" accept=".json" style="display: none;">
+
+                    <!-- Botón añadido: descargar imagen con fondo dentro del canvas -->
+                    <button id="downloadImageBtn" class="btn btn-primary" style="margin-left:8px;">
+                        🖼️ Descargar imagen con fondo
+                    </button>
                 </div>
             </section>
         </main>
@@ -101,7 +106,11 @@
         </div>
     </div>
 
+    <!-- Canvas oculto para exportar la imagen -->
+    <canvas id="exportCanvas" style="display:none"></canvas>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
+    <script src="export_image.js"></script>
 </body>
 </html>
