@@ -1,4 +1,4 @@
-https://github.com/vegatovararmandoemanuel-maker/https-vegatovararmandoemanuel-maker.github.io-ABIGAILTEAMO-/actions/runs/26884268642/job/79460566397** ABIGAIL.github.io**
+** ABIGAIL.github.io**
 
 **Localizador de Coordenadas GPS - Aplicación Web Interactiva**
 
