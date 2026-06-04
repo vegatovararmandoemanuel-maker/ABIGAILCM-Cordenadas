@@ -1,5 +1,8 @@
+// Añadidas funciones para dibujar imagen de fondo en modo cover en el canvas si existe la imagen
+
 /* ============================================
    FUNCIONALIDAD PRINCIPAL - GPS Y COORDENADAS
+   (con fondo en canvas si IMG_20260410_223451_846.jpg está disponible)
    ============================================ */
 
 let map;
@@ -46,6 +49,42 @@ function setupEventListeners() {
             closeModal();
         }
     });
+}
+
+/* ============================================
+   Helper para cargar imágenes con crossOrigin
+   ============================================ */
+function loadImage(src){
+    return new Promise((resolve)=>{
+        if(!src) return resolve(null);
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = ()=>resolve(img);
+        img.onerror = ()=>resolve(null);
+        img.src = src;
+    });
+}
+
+/* ============================================
+   Dibujar imagen como background en modo cover
+   ============================================ */
+async function drawBackgroundCover(ctx, src, w, h){
+    const img = await loadImage(src);
+    if(!img) return false;
+    const iw = img.width, ih = img.height;
+    const ir = iw/ih, cr = w/h;
+    let sx = 0, sy = 0, sw = iw, sh = ih;
+    if (ir > cr) {
+        // imagen más ancha -> recortar lados
+        sw = ih * cr;
+        sx = (iw - sw) / 2;
+    } else {
+        // imagen más alta -> recortar arriba/abajo
+        sh = iw / cr;
+        sy = (ih - sh) / 2;
+    }
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+    return true;
 }
 
 /* ============================================
@@ -230,164 +269,4 @@ function renderHistory() {
                 </button>
                 <button class="btn btn-secondary" style="font-size: 0.9em; padding: 6px 12px;" onclick="deleteHistoryItem(${index})">
                     🗑️ Eliminar
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function goToHistory(index) {
-    const location = history[index];
-    updateMap(location.latitude, location.longitude);
-    document.getElementById('latitude').textContent = location.latitude.toFixed(6);
-    document.getElementById('longitude').textContent = location.longitude.toFixed(6);
-    document.getElementById('accuracy').textContent = location.accuracy.toFixed(2) + ' metros';
-    document.getElementById('altitude').textContent = location.altitude ? location.altitude.toFixed(2) + ' metros' : 'No disponible';
-}
-
-function deleteHistoryItem(index) {
-    history.splice(index, 1);
-    saveHistory();
-    renderHistory();
-}
-
-function clearHistory() {
-    if (confirm('¿Estás seguro de que deseas eliminar todo el historial?')) {
-        history = [];
-        saveHistory();
-        renderHistory();
-        showModal('Éxito', 'Historial eliminado correctamente');
-    }
-}
-
-function saveHistory() {
-    localStorage.setItem('locationHistory', JSON.stringify(history));
-}
-
-function loadHistory() {
-    const saved = localStorage.getItem('locationHistory');
-    if (saved) {
-        history = JSON.parse(saved);
-        renderHistory();
-    }
-}
-
-/* ============================================
-   COPIAR AL PORTAPAPELES
-   ============================================ */
-
-function copyToClipboard(event) {
-    const target = event.target.dataset.target;
-    const value = document.getElementById(target).textContent;
-    
-    navigator.clipboard.writeText(value).then(() => {
-        const btn = event.target;
-        const originalText = btn.textContent;
-        btn.textContent = '✅ Copiado';
-        
-        setTimeout(() => {
-            btn.textContent = originalText;
-        }, 2000);
-    });
-}
-
-/* ============================================
-   COMPARTIR UBICACIÓN
-   ============================================ */
-
-function shareLocation() {
-    const latitude = document.getElementById('latitude').textContent;
-    const longitude = document.getElementById('longitude').textContent;
-    
-    if (latitude === '--' || longitude === '--') {
-        showModal('Error', 'Primero obtén tu ubicación');
-        return;
-    }
-    
-    const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-    const text = `Mi ubicación: ${latitude}, ${longitude}`;
-    
-    if (navigator.share) {
-        navigator.share({
-            title: 'Apps-Coreem',
-            text: text,
-            url: mapsUrl
-        }).catch(err => console.log('Error compartiendo:', err));
-    } else {
-        // Fallback
-        const shareText = `${text}\n${mapsUrl}`;
-        navigator.clipboard.writeText(shareText).then(() => {
-            showModal('Éxito', 'Información copiada al portapapeles:\n' + shareText);
-        });
-    }
-}
-
-/* ============================================
-   EXPORTAR/IMPORTAR DATOS
-   ============================================ */
-
-function exportData() {
-    const data = {
-        version: '1.0',
-        exportDate: new Date().toISOString(),
-        history: history
-    };
-    
-    const dataStr = JSON.stringify(data, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    
-    link.href = url;
-    link.download = `apps-coreem-export-${Date.now()}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showModal('Éxito', 'Datos exportados correctamente');
-}
-
-function importData() {
-    document.getElementById('fileInput').click();
-}
-
-function handleFileImport(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const data = JSON.parse(e.target.result);
-            
-            if (data.history && Array.isArray(data.history)) {
-                history = data.history;
-                saveHistory();
-                renderHistory();
-                showModal('Éxito', `Se importaron ${history.length} ubicaciones correctamente`);
-            } else {
-                showModal('Error', 'Formato de archivo no válido');
-            }
-        } catch (error) {
-            showModal('Error', 'Error al parsear el archivo: ' + error.message);
-        }
-    };
-    reader.readAsText(file);
-    
-    // Limpiar el input
-    event.target.value = '';
-}
-
-/* ============================================
-   MODAL
-   ============================================ */
-
-function showModal(title, message) {
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalMessage').textContent = message;
-    document.getElementById('modal').style.display = 'block';
-}
-
-function closeModal() {
-    document.getElementById('modal').style.display = 'none';
-}
+{
